@@ -1,6 +1,8 @@
-# Ziki Issues
+# Jemi Side Studio
 
-Team **Zendor** fork of [`emerjent/bug-tracker`](https://github.com/emerjent/bug-tracker) (formerly `zeduchat/bug-tracker`).
+Jemi Side Studio is a human-agent issue workflow built on the Ziki issue tracker, a team fork of [`emerjent/bug-tracker`](https://github.com/emerjent/bug-tracker) (formerly `zeduchat/bug-tracker`).
+
+**Live app:** [Open Jemi Side Studio](https://ziki-issue-tracker.vercel.app/demo)
 
 Report bugs, filter the board, triage status/assignee, vote, and leave comments.
 
@@ -19,7 +21,7 @@ Brand mark: `public/ziki-mark.svg`.
 - pnpm
 - Docker / Coolify deploy (served from root at `ziki.dev`)
 
-## Live (production)
+## Original Ziki production site
 
 https://ziki.dev
 
