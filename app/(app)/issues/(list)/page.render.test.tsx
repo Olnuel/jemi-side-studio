@@ -309,7 +309,7 @@ describe("issue list layout", () => {
     expect(box).toContain("Nothing done in the last 30 days");
     expect(box).not.toContain("Working on #3 Seed");
     expect(box).toContain('aria-label="Show Scout"');
-    expect(box).toMatch(/<button[^>]*disabled[^>]*title="Coming soon"[^>]*>Work<\/button>/);
+    expect(box).toMatch(/<a[^>]*href="\/activity#work"[^>]*>Work history<\/a>/);
     expect(box).toContain('aria-label="Manage Lens"');
     expect(box).not.toContain(">Manage<");
   });

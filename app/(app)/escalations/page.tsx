@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { currentTenantIdFor } from "@/lib/tenant-context";
 import { listOwnerQuestions, parseEscalationBody, type EscalationType } from "@/lib/agent-questions";
 import { LocalTime } from "@/components/local-time";
-import { EscalationTypeBadge, QuickResolveButtons } from "./escalation-controls";
+import { EscalationAnswerForm, EscalationTypeBadge, QuickResolveButtons } from "./escalation-controls";
 
 export const metadata = { title: "Agent Escalations" };
 
@@ -203,11 +203,15 @@ export default async function EscalationsPage({
               ) : null}
 
               {item.isWaiting && item.kind === "question" ? (
-                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-zk-divider pt-2">
-                  <QuickResolveButtons escalationId={item.id} />
-                  <Link href={item.href} className="text-xs font-semibold text-zk-accent hover:underline">
-                    Write custom response →
-                  </Link>
+                <div className="space-y-3 border-t border-zk-divider pt-3">
+                  <div>
+                    <p className="mb-2 text-xs font-semibold text-zk-text2">Quick decision</p>
+                    <QuickResolveButtons escalationId={item.id} />
+                  </div>
+                  <div className="rounded-xl border border-zk-border bg-zk-chip/40 p-3">
+                    <h3 id={`escalation-response-${item.id}`} className="mb-2 text-sm font-semibold text-zk-text">Reply to {item.agentName}</h3>
+                    <EscalationAnswerForm escalationId={item.id} labelledBy={`escalation-response-${item.id}`} />
+                  </div>
                 </div>
               ) : item.isWaiting ? (
                 <div className="border-t border-zk-divider pt-2">

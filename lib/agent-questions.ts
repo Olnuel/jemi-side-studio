@@ -207,7 +207,7 @@ export async function answerAgentQuestion(userId: string, tenantId: string, ques
       bugId: question.bugId,
     });
 
-    return { id: questionId, answer, answeredAt };
+    return { id: questionId, answer, answeredAt, bugId: question.bugId };
   });
 }
 

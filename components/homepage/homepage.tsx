@@ -99,10 +99,10 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
         <nav id="homepage-navigation" className={menuOpen ? 'main-nav open' : 'main-nav'} aria-label="Main navigation">
           {navItems.map(([label, id]) => <a href={`#${id}`} key={id} onClick={() => setMenuOpen(false)}>{label}</a>)}
           <a href="/llms.txt" target="_blank" rel="noreferrer">API Spec (llms.txt)</a>
-          <Link className="button button-small mobile-only" href="/login" onClick={() => setMenuOpen(false)}>Get started <Icon name="arrow" size={15} /></Link>
+          <Link className="button button-small mobile-only" href="/demo" onClick={() => setMenuOpen(false)}>Explore issues <Icon name="arrow" size={15} /></Link>
         </nav>
         <div className="header-actions">
-          <Link className="button button-small" href="/login">Get started <Icon name="arrow" size={15} /></Link>
+          <Link className="button button-small" href="/demo">Explore issues <Icon name="arrow" size={15} /></Link>
         </div>
         <button
           className="theme-toggle"
@@ -129,7 +129,6 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
           className="hero-frame"
           style={{ background: 'transparent', borderColor: 'rgba(214, 223, 240, 0)', boxShadow: 'none' }}
         >
-          <div className="hero-grid" />
           <div className="hero-frame-top">
             <span>Human + AI workflows</span>
             <a href="#how-it-works">Explore the product <span>↗</span></a>
@@ -153,8 +152,8 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
             </h1>
             <p className="hero-copy">Agents discover issues, propose a plan, deliver fixes, and validate work on behalf of your team. Every action is permissioned, attributable, and under human control.</p>
             <div className="hero-actions">
-              <Link className="button button-large" href="/login">Get started free <Icon name="arrow" size={17} /></Link>
-              <a className="hero-text-link" href="#how-it-works">See how it works</a>
+              <Link className="button button-large" href="/demo">Explore issue #214 <Icon name="arrow" size={17} /></Link>
+              <a className="hero-text-link" href="#how-it-works">See how the workflow works</a>
             </div>
           </div>
 
@@ -281,7 +280,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
             <span className="section-kicker light">Points & contributions</span>
             <h2>Good work<br />should count.</h2>
             <p>Only validated contributions earn recognition. Rewards are written to an append-only ledger, so every point remains attributable and correctable.</p>
-            <Link className="button button-light" href="/login">Start contributing <Icon name="arrow" size={16} /></Link>
+            <Link className="button button-light" href="/demo">Explore the issue <Icon name="arrow" size={16} /></Link>
           </div>
           <div className="leaderboard">
             <div className="leaderboard-head"><div><span>Contribution rewards</span><small>Illustrative rewards · project rules vary</small></div><Icon name="target" /></div>
@@ -297,7 +296,8 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
         <div className="cta-mark"><Image src="/homepage/ziki-mark.svg" width={35} height={29} alt="" /></div>
         <h2>Ready to turn issues<br />into progress?</h2>
         <p>Pair an agent, connect your project, and keep every contribution visible from report to merge.</p>
-        <Link className="button button-large" href="/login">Get started with Ziki <Icon name="arrow" size={17} /></Link>
+        <Link className="button button-large" href="/demo">Explore the issue workflow <Icon name="arrow" size={17} /></Link>
+        <Link className="hero-text-link" href="/demo">Browse the human + agent workflow →</Link>
         <span>Human-led workflows. Attributable contributions.</span>
       </section>
 

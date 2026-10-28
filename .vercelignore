@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+.vercel-cli-profile/
+.next-local-auth-*.log
+.next/
+node_modules/
+coverage/
+test-results/
+playwright-report/

@@ -8,7 +8,7 @@ import { parseEscalationBody } from "@/lib/agent-questions";
 import { statusLabel } from "@/lib/labels";
 import { LocalTime } from "@/components/local-time";
 import { IssueApprovalBanner } from "@/components/issue-approval-banner";
-import { EscalationTypeBadge, QuickResolveButtons } from "@/app/(app)/escalations/escalation-controls";
+import { EscalationAnswerForm, EscalationTypeBadge, QuickResolveButtons } from "@/app/(app)/escalations/escalation-controls";
 
 export const metadata = { title: "Human–Agent Activity & Approvals" };
 const panel = "space-y-4 rounded-2xl border border-zk-border bg-zk-surface p-4 sm:p-6";
@@ -66,7 +66,10 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
             <p className="whitespace-pre-wrap break-words text-sm">{parsed.cleanBody}</p>
             <IssueLinks bug={question.bug} />
             <QuickResolveButtons escalationId={question.id} />
-            <Link className={link} href={`/escalations/${question.id}`}>Write a response or decline</Link>
+            <div className="rounded-xl border border-zk-border bg-zk-chip/40 p-3">
+              <h4 id={`escalation-response-${question.id}`} className="mb-2 text-sm font-semibold">Reply to {question.agent.name}</h4>
+              <EscalationAnswerForm escalationId={question.id} labelledBy={`escalation-response-${question.id}`} />
+            </div>
           </article>;
         })}
         <Pages params={params} stream="questions" next={data.questions.next} />

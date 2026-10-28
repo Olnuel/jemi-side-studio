@@ -158,12 +158,6 @@
   overflow: hidden;
   position: relative;
 }
-.ziki-homepage .hero-grid {
-  background-image: repeating-linear-gradient(90deg, transparent 0, transparent calc(12.5% - 1px), rgba(38,59,99,.065) calc(12.5% - 1px), rgba(38,59,99,.065) 12.5%);
-  inset: 0;
-  pointer-events: none;
-  position: absolute;
-}
 .ziki-homepage .hero-frame-top {
   align-items: center;
   display: grid;
@@ -432,7 +426,6 @@
 :root[data-theme='dark'] .ziki-homepage .button-light { background: #f5f7fc; border-color: #f5f7fc; color: #0b1733; }
 :root[data-theme='dark'] .ziki-homepage .cta-mark { background: #111f3d; border-color: #304a78; }
 :root[data-theme='dark'] .ziki-homepage .hero-frame { background: rgba(11, 23, 51, .96); border-color: #263b63; box-shadow: 0 30px 100px rgba(0, 0, 0, .28); }
-:root[data-theme='dark'] .ziki-homepage .hero-grid { background-image: repeating-linear-gradient(90deg, transparent 0, transparent calc(12.5% - 1px), rgba(143,201,255,.07) calc(12.5% - 1px), rgba(143,201,255,.07) 12.5%); }
 :root[data-theme='dark'] .ziki-homepage .hero-frame-top > span,
 :root[data-theme='dark'] .ziki-homepage .hero-kicker { color: #9eacc7; }
 :root[data-theme='dark'] .ziki-homepage .switch-track { background: linear-gradient(145deg, #172f5e, #111f3d); border-color: #3978f6; box-shadow: inset 0 6px 15px rgba(0,0,0,.3), 0 0 0 8px rgba(57,120,246,.09); }
@@ -572,7 +565,6 @@
 :root:not([data-theme='light']) .ziki-homepage .button-light { background: #f5f7fc; border-color: #f5f7fc; color: #0b1733; }
 :root:not([data-theme='light']) .ziki-homepage .cta-mark { background: #111f3d; border-color: #304a78; }
 :root:not([data-theme='light']) .ziki-homepage .hero-frame { background: rgba(11, 23, 51, .96); border-color: #263b63; box-shadow: 0 30px 100px rgba(0, 0, 0, .28); }
-:root:not([data-theme='light']) .ziki-homepage .hero-grid { background-image: repeating-linear-gradient(90deg, transparent 0, transparent calc(12.5% - 1px), rgba(143,201,255,.07) calc(12.5% - 1px), rgba(143,201,255,.07) 12.5%); }
 :root:not([data-theme='light']) .ziki-homepage .hero-frame-top > span,
 :root:not([data-theme='light']) .ziki-homepage .hero-kicker { color: #9eacc7; }
 :root:not([data-theme='light']) .ziki-homepage .switch-track { background: linear-gradient(145deg, #172f5e, #111f3d); border-color: #3978f6; box-shadow: inset 0 6px 15px rgba(0,0,0,.3), 0 0 0 8px rgba(57,120,246,.09); }

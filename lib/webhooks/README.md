@@ -68,9 +68,10 @@ sweep; a failing sweep never blocks delivery and is retried on the next run.
 
 Nothing is delivered until the dispatcher runs. Two supported schedulers:
 
-**Vercel Cron** — `vercel.json` schedules `/api/v1/webhooks/dispatch` every
-minute. Vercel calls it with `GET` and `Authorization: Bearer $CRON_SECRET`;
-set `CRON_SECRET` in the Vercel project (and in `.env` for local parity).
+**Vercel Pro Cron** — `vercel.json` can schedule `/api/v1/webhooks/dispatch`
+with `GET` and `Authorization: Bearer $CRON_SECRET`. Set `CRON_SECRET` in the
+Vercel project (and in `.env` for local parity). Vercel Hobby only permits
+daily Vercel Cron schedules; use an external scheduler for minute-level work.
 
 **Coolify / any external cron** — call the route with `POST` and the
 dispatcher secret:

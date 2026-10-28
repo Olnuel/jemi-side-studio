@@ -23,7 +23,7 @@ const STATUS_LABEL: Record<AgentStatus, { label: string; tone: string }> = {
 
 /**
  * Your agents in the Inbox's top box, one at a time; the dots switch between
- * them. Work / Stop work is shown but not wired up yet.
+ * them. The work link opens the activity history for their workspace.
  */
 export function InboxAgents({ agents }: { agents: InboxAgent[] }) {
   const [index, setIndex] = useState(0);
@@ -38,7 +38,6 @@ export function InboxAgents({ agents }: { agents: InboxAgent[] }) {
 
   const agent = agents[Math.min(index, agents.length - 1)];
   const status = STATUS_LABEL[agent.status];
-  const working = agent.status === "working";
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-start gap-2.5" aria-live="polite">
@@ -46,14 +45,13 @@ export function InboxAgents({ agents }: { agents: InboxAgent[] }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <span className="truncate text-[13px] font-semibold text-zk-text">{agent.name}</span>
-            <button
-              type="button"
-              disabled
-              title="Coming soon"
-              className="ml-auto inline-flex h-6 shrink-0 cursor-not-allowed items-center rounded-full border border-zk-border px-2.5 text-[11px] font-semibold text-zk-text2 opacity-70"
+            <Link
+              href="/activity#work"
+              title="View work history"
+              className="ml-auto inline-flex h-6 shrink-0 items-center rounded-full border border-zk-border px-2.5 text-[11px] font-semibold text-zk-text2 hover:bg-zk-chip focus-visible:outline-2 focus-visible:outline-zk-accent"
             >
-              {working ? "Stop work" : "Work"}
-            </button>
+              Work history
+            </Link>
             <Link
               href="/settings/agents"
               aria-label={`Manage ${agent.name}`}

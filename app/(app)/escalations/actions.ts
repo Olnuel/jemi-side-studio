@@ -25,7 +25,8 @@ export async function answerEscalationAction(
   if (!parsed.success) return { ok: false, error: "Write an answer before sending it." };
 
   try {
-    await answerAgentQuestion(user.id, tenantId, escalationId, parsed.data.answer);
+    const result = await answerAgentQuestion(user.id, tenantId, escalationId, parsed.data.answer);
+    if (result.bugId) revalidatePath(`/issues/${result.bugId}`);
   } catch (error) {
     if (error instanceof IssueApiError) return { ok: false, error: error.message };
     throw error;
@@ -33,6 +34,7 @@ export async function answerEscalationAction(
 
   revalidatePath("/activity");
   revalidatePath("/escalations");
+  revalidatePath("/issues");
   revalidatePath(`/escalations/${escalationId}`);
   revalidatePath("/questions");
   revalidatePath(`/questions/${escalationId}`);

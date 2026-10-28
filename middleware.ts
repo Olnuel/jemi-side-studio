@@ -31,6 +31,8 @@ export function isPublicPath(
     pathWithoutBase === "/" ||
     pathWithoutBase === "" ||
     pathWithoutBase === "/llms.txt" ||
+    pathWithoutBase === "/demo" ||
+    pathWithoutBase.startsWith("/demo/") ||
     isAuthPage ||
     isPasswordResetPage ||
     isIssuePreview ||
@@ -85,6 +87,15 @@ export default auth((req) => {
   const isPublic = isPublicPath(pathWithoutBase, req.headers.get("user-agent"));
 
   if (!isLoggedIn && !isPublic) {
+    // Public visitors can browse the interactive sample for common workspace
+    // areas without signing in. Mutating actions remain inside the real app
+    // and continue through the normal authentication flow.
+    const demoPath = publicDemoPath(pathWithoutBase);
+    if (demoPath) {
+      return NextResponse.redirect(
+        new URL(BASE_PATH ? `${BASE_PATH}${demoPath}` : demoPath, req.nextUrl.origin),
+      );
+    }
     const url = new URL(
       BASE_PATH ? `${BASE_PATH}/login` : "/login",
       req.nextUrl.origin,
@@ -108,6 +119,14 @@ export default auth((req) => {
 
   return NextResponse.next();
 });
+
+function publicDemoPath(path: string): string | null {
+  if (path === "/dashboard" || path === "/") return "/demo";
+  if (path === "/issues" || path.startsWith("/issues/") || path.startsWith("/bugs/")) return "/demo/issues";
+  if (path === "/inbox" || path.startsWith("/inbox/") || path.startsWith("/escalations")) return "/demo/inbox";
+  if (path.startsWith("/settings/agents")) return "/demo/agents";
+  return null;
+}
 
 /** Keeps the agent approval code across the sign-in redirect. Other queries stay off the callback. */
 function callbackPath(path: string, url: URL): string {

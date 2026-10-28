@@ -121,7 +121,9 @@ Platform unfurl caches are outside our control; metadata is generated on each re
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | Optional SMTP for password-reset email (logs reset URL to console when unset) |
 | `REPORT_FORM_URL` | Optional Google Form behind the floating "Report issue" button. Must be an `https://` link on a Google-owned host; when unset the button is not rendered |
 
-Google redirect URI: `{AUTH_URL}/api/auth/callback/google`
+For local Google OAuth, add `http://localhost:3001/api/auth/callback/google` as an
+Authorized redirect URI in Google Cloud Console. In production, use
+`https://ziki.dev/api/auth/callback/google`.
 
 ## Deploy (Coolify)
 
@@ -130,6 +132,7 @@ Google redirect URI: `{AUTH_URL}/api/auth/callback/google`
 - GitHub secrets: `COOLIFY_WEBHOOK_URL` (and optionally `COOLIFY_TOKEN`).
 - `Deploy (Coolify)` runs only after `Malware Scan (CI Gate)` passes on `main`.
 - Background sweeps: `vercel.json` crons do not run on Coolify. Set `CRON_SECRET` and schedule a request every minute (a Coolify scheduled task or any external cron) to `POST {base}/api/internal/cron` with `Authorization: Bearer $CRON_SECRET`, where `{base}` is `AUTH_URL` without its trailing `/api/auth`, keeping any sub-path (e.g. `https://ziki.dev/api/internal/cron`, or `https://contributors.zedu.chat/bug-tracker/api/internal/cron` on the legacy sub-path). It runs offer expiry, stale-claim release, orphaned-issue recovery, level promotions, webhook dispatch and attachment pruning. No session is needed (#571).
+- Vercel Hobby only permits daily Vercel Cron schedules, so the Vercel deployment uses Supabase `pg_cron` + `pg_net` to `POST /api/internal/cron` every minute. Keep `CRON_SECRET` and the Vercel Protection Bypass secret in Supabase Vault; send them as `Authorization: Bearer ...` and `x-vercel-protection-bypass` headers respectively. `/api/internal/cron` already runs the webhook dispatcher along with the other background sweeps.
 - Orphaned-issue recovery (#623) reopens up to 100 oldest `in_progress` issues per run when they have no assignee, no unreleased active/offered claim, and no linked PR. Deleted issues are excluded. Each repair rechecks eligibility under the issue lock and records an `issue.updated` system event with reason `orphaned_in_progress`; cron results expose `sweeps.orphanedIssues.reopened`. This also repairs preexisting orphans after deployment without an admin manually editing each issue.
 
 ## Scripts

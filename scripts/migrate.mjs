@@ -169,6 +169,73 @@ function initTablesPresent() {
   }
 }
 
+function isNonEmptySchemaFailure(text) {
+  return /P3005|database schema is not empty/i.test(text);
+}
+
+function assertInitObjectsAreAbsent() {
+  const file = join(tmpdir(), "ziki-init-baseline-guard.sql");
+  writeFileSync(
+    file,
+    `DO $$
+DECLARE conflicts text;
+BEGIN
+  SELECT string_agg(object_name, ', ')
+  INTO conflicts
+  FROM (
+    SELECT 'table public."User"' AS object_name WHERE to_regclass('public."User"') IS NOT NULL
+    UNION ALL SELECT 'table public."Bug"' WHERE to_regclass('public."Bug"') IS NOT NULL
+    UNION ALL SELECT 'table public."Comment"' WHERE to_regclass('public."Comment"') IS NOT NULL
+    UNION ALL SELECT 'type public."Severity"' WHERE to_regtype('public."Severity"') IS NOT NULL
+    UNION ALL SELECT 'type public."Status"' WHERE to_regtype('public."Status"') IS NOT NULL
+    UNION ALL SELECT 'index public."User_email_key"' WHERE to_regclass('public."User_email_key"') IS NOT NULL
+    UNION ALL SELECT 'constraint public."Bug_reporterId_fkey"'
+      WHERE EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Bug_reporterId_fkey')
+    UNION ALL SELECT 'constraint public."Bug_assigneeId_fkey"'
+      WHERE EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Bug_assigneeId_fkey')
+    UNION ALL SELECT 'constraint public."Comment_bugId_fkey"'
+      WHERE EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Comment_bugId_fkey')
+    UNION ALL SELECT 'constraint public."Comment_authorId_fkey"'
+      WHERE EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Comment_authorId_fkey')
+  ) existing;
+
+  IF conflicts IS NOT NULL THEN
+    RAISE EXCEPTION 'Cannot bootstrap Ziki baseline because initial migration objects already exist: %', conflicts;
+  END IF;
+END $$;
+`,
+  );
+  try {
+    runPrisma(`db execute --schema prisma/schema.prisma --file ${JSON.stringify(file)}`);
+  } finally {
+    try {
+      unlinkSync(file);
+    } catch {
+      // The probe file is temporary and safe to leave behind if cleanup fails.
+    }
+  }
+}
+
+function bootstrapNonEmptySchema(initialText) {
+  if (!isNonEmptySchemaFailure(initialText)) return false;
+
+  console.log(
+    "[db:migrate] Existing database schema has no Prisma baseline. Checking that Ziki's initial tables and types are absent before adding them.",
+  );
+  assertInitObjectsAreAbsent();
+  runPrisma(
+    `db execute --schema prisma/schema.prisma --file prisma/migrations/${initMigration}/migration.sql`,
+  );
+  if (!recordApplied(initMigration)) {
+    throw new Error(`[db:migrate] Could not record ${initMigration} after applying its initial schema.`);
+  }
+  console.log(
+    `[db:migrate] Applied and recorded ${initMigration}; unrelated existing tables were preserved.`,
+  );
+  deploy();
+  return true;
+}
+
 function baselineStuckMigrations(initialText) {
   let text = initialText;
   for (let attempt = 0; attempt < 80; attempt += 1) {
@@ -222,6 +289,17 @@ try {
 // already exist is recorded the same way. Anything else still stops startup.
 if (firstDeployFailed && baselineStuckMigrations(deployErrorText)) {
   firstDeployFailed = false;
+}
+
+if (firstDeployFailed) {
+  try {
+    if (bootstrapNonEmptySchema(deployErrorText)) {
+      firstDeployFailed = false;
+    }
+  } catch (bootstrapError) {
+    deployErrorText = bootstrapError instanceof Error ? bootstrapError.message : String(bootstrapError);
+    console.error("[db:migrate] Could not bootstrap the initial Ziki schema:", deployErrorText);
+  }
 }
 
 // A normal container start runs `migrate deploy` only (#581). The repair

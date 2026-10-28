@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
+import { useActionState, useId, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -54,7 +54,7 @@ export function QuickResolveButtons({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const handleResolve = (actionType: "approve" | "authorize") => {
+  const handleResolve = (actionType: "approve" | "authorize" | "reject") => {
     setError(null);
     startTransition(async () => {
       try {
@@ -91,6 +91,15 @@ export function QuickResolveButtons({
         >
           Authorize Work
         </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={isPending}
+          onClick={() => handleResolve("reject")}
+          className="rounded-full border border-zk-bad-bd bg-zk-surface px-3.5 py-2 text-xs font-semibold text-zk-bad-fg hover:bg-zk-bad-soft"
+        >
+          Decline
+        </Button>
       </div>
       {error ? (
         <p role="alert" className="text-sm text-zk-bad-fg">
@@ -108,6 +117,7 @@ export function EscalationAnswerForm({
   escalationId: string;
   labelledBy?: string;
 }) {
+  const inputId = useId();
   const [result, action, pending] = useActionState<AnswerActionResult | undefined, FormData>(
     answerEscalationAction,
     undefined,
@@ -119,12 +129,12 @@ export function EscalationAnswerForm({
       <input type="hidden" name="escalationId" value={escalationId} />
       <div className="space-y-1">
         {!labelledBy ? (
-          <label htmlFor="answer" className="block text-sm font-semibold text-zk-text">
+          <label htmlFor={inputId} className="block text-sm font-semibold text-zk-text">
             Your response
           </label>
         ) : null}
         <Textarea
-          id="answer"
+          id={inputId}
           name="answer"
           rows={4}
           required
@@ -132,11 +142,11 @@ export function EscalationAnswerForm({
           placeholder="Provide decision, unblocking guidance, or instructions..."
           aria-labelledby={labelledBy}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? "answer-error" : undefined}
+          aria-describedby={error ? `${inputId}-error` : undefined}
         />
       </div>
       {error ? (
-        <p id="answer-error" role="alert" className="text-sm text-zk-bad-fg">
+        <p id={`${inputId}-error`} role="alert" className="text-sm text-zk-bad-fg">
           {error}
         </p>
       ) : null}
@@ -148,9 +158,7 @@ export function EscalationAnswerForm({
         >
           {pending ? "Sending…" : "Send response"}
         </Button>
-        <span className="text-xs text-zk-muted">
-          The response cannot be edited once dispatched to the agent.
-        </span>
+        <span className="text-xs text-zk-muted">This resolves the request and becomes part of the issue history.</span>
       </div>
     </form>
   );
